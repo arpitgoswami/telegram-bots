@@ -1,12 +1,12 @@
 module.exports = (bot, language) => {
-  bot.onText(/\/language (.+)/, (msg, match) => {
+  bot.onText(/\/language\s*(.*)/, (msg, match) => {
     const chatId = msg.chat.id;
-    let languageInput = match[1];
+    let languageInput = match[1].trim(); // Trim spaces
 
     if (!languageInput) {
       return bot.sendMessage(
         chatId,
-        "Please specify a language. Example: /language Spanish"
+        "Please specify a language. Example: /language Spanish. Supported languages are: English, Spanish, French, German, Italian, Hinglish, Hindi."
       );
     }
 
@@ -19,12 +19,12 @@ module.exports = (bot, language) => {
       "hinglish",
       "hindi",
     ];
-    languageInput = languageInput.toLowerCase(); // Normalize input for comparison
+    languageInput = languageInput.toLowerCase(); // Normalize input
 
     if (!validLanguages.includes(languageInput)) {
       return bot.sendMessage(
         chatId,
-        `Sorry, "${languageInput}" is not a supported language. Supported languages are: ${validLanguages.join(
+        `❌ Sorry, "${languageInput}" is not a supported language. Supported languages are: ${validLanguages.join(
           ", "
         )}.`
       );
@@ -34,7 +34,8 @@ module.exports = (bot, language) => {
 
     bot.sendMessage(
       chatId,
-      `Language has been set to ${language.current}. My future responses will be in ${language.current}.`
+      `✅ Language has been set to *${language.current}*. My future responses will be in *${language.current}*.`,
+      { parse_mode: "Markdown" }
     );
   });
 };

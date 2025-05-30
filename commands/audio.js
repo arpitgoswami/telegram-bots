@@ -1,42 +1,43 @@
+const gTTS = require("gtts");
 const fs = require("fs");
-const util = require("util");
-const textToSpeech = require("@google-cloud/text-to-speech");
-
-const client = new textToSpeech.TextToSpeechClient();
 
 module.exports = (bot) => {
-  bot.onText(/\/audio (.+)/, async (msg, match) => {
+  bot.onText(/\/audio\s*(.*)/, (msg, match) => {
     const chatId = msg.chat.id;
-    const text = match[1];
+    const text = match[1]?.trim();
 
     if (!text) {
       return bot.sendMessage(
         chatId,
-        "Please provide text to generate audio. Example: /audio Hello world"
+        "❗ Please provide text to convert to audio. Example: /audio Hello world"
       );
     }
 
     try {
-      bot.sendMessage(chatId, "Generating audio from text... 🎵");
+      const gtts = new gTTS(text, "en");
+      const filePath = `Audio_${Date.now()}.mp3`;
 
-      const request = {
-        input: { text },
-        voice: { languageCode: "en-US", ssmlGender: "NEUTRAL" },
-        audioConfig: { audioEncoding: "MP3" },
-      };
-
-      const [response] = await client.synthesizeSpeech(request);
-      const audioBuffer = Buffer.from(response.audioContent, "binary");
-
-      await bot.sendAudio(
-        chatId,
-        audioBuffer,
-        {},
-        {
-          filename: "output.mp3",
-          contentType: "audio/mpeg",
+      gtts.save(filePath, (err) => {
+        if (err) {
+          console.error("Error generating audio:", err);
+          return bot.sendMessage(
+            chatId,
+            "❌ Sorry, I couldn't generate the audio file."
+          );
         }
-      );
+
+        bot
+          .sendAudio(chatId, filePath, {
+            caption: "Here is your audio file 🎵",
+          })
+          .then(() => {
+            fs.unlink(filePath, (unlinkErr) => {
+              if (unlinkErr) {
+                console.error("Error deleting audio file:", unlinkErr);
+              }
+            });
+          });
+      });
     } catch (error) {
       console.error("Audio generation error:", error);
       bot.sendMessage(

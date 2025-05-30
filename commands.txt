@@ -1,0 +1,8 @@
+start - Begin chatting
+commands - View all available commands  
+help - Help docs  
+image <prompt> - Gemini image generation  
+language <language> - Set the language  
+short <url> - Short any valid URL
+list – List stats
+qr <URL> - QR code with URL

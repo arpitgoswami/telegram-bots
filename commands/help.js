@@ -3,7 +3,7 @@ module.exports = (bot) => {
     const chatId = msg.chat.id;
     bot.sendMessage(
       chatId,
-      "Need a hand? Here's what I can do:\n\n/start - Say hello 👋\n/help - You're already here!\n/commands - Show all available commands\n\nOr just type anything—I'm always here to talk. 🙂"
+      "Need a hand? Here's what I can do:\n\n/commands - View all available commands\n/image <prompt> - Generate an image 🖼️\n/short <URL> - Shorten a URL 🔗\n\nJust message me and I will reply."
     );
   });
 };
