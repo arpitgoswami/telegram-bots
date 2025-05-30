@@ -4,6 +4,8 @@ module.exports = (bot) => {
     bot.sendMessage(
       chatId,
       "Here’s what I can do for you\n\n" +
+        "*Image Upload*\n" +
+        "Upload an image to get its exact prompt\n\n" +
         "*General Commands*\n" +
         "/start - Greet and begin chatting\n" +
         "/help - Need help? I’m here!\n\n" +

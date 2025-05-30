@@ -1,19 +1,23 @@
 const { GoogleGenAI, Modality } = require("@google/genai");
 
 module.exports = (bot) => {
-  bot.onText(/\/image (.+)/, async (msg, match) => {
+  bot.onText(/\/image(?:\s+(.+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
-    const prompt = match[1];
+    const prompt = match[1]?.trim();
 
     if (!prompt) {
       return bot.sendMessage(
         chatId,
-        "Please provide a prompt for the image. Example: /image cute cat"
+        "Please provide a prompt for the image.\n\nExample: `/image cute cat`",
+        { parse_mode: "Markdown" }
       );
     }
 
     try {
-      bot.sendMessage(chatId, "Please wait while I generate the image... 🖼️");
+      await bot.sendMessage(
+        chatId,
+        "🖼️ Please wait while I generate the image..."
+      );
 
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -27,10 +31,11 @@ module.exports = (bot) => {
 
       let imageBuffer = null;
 
-      for (const part of response.candidates[0].content.parts) {
+      for (const part of response.candidates?.[0]?.content?.parts || []) {
         if (part.inlineData) {
           const imageData = part.inlineData.data;
           imageBuffer = Buffer.from(imageData, "base64");
+          break;
         }
       }
 

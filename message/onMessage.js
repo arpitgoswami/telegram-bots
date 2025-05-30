@@ -26,9 +26,6 @@ ${userMessage}
 
       // Add new interaction to summary (with a limit)
       messageSummary += `User: ${userMessage}\nAI: ${response}\n`;
-      if (messageSummary.length > 2000) {
-        messageSummary = messageSummary.slice(-1500); // Keep last 1500 characters
-      }
 
       // Simulate natural typing delay
       setTimeout(() => {

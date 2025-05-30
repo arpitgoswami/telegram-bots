@@ -43,3 +43,6 @@ audioCommand(bot);
 const onMessage = require("./message/onMessage");
 const randomMessage = require("./message/randomMessage");
 onMessage(bot, model, language);
+
+const onImage = require("./message/onImage");
+bot.on("photo", (msg) => onImage(bot, msg));

@@ -10,14 +10,18 @@ mongoose
   .catch((err) => console.log("Error: ", err));
 
 module.exports = (bot) => {
-  bot.onText(/\/short (.+)/, async (msg, match) => {
+  bot.onText(/\/short(?:\s+(.+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
-    const website = match[1];
+    const website = match[1]?.trim(); // Handle undefined or whitespace
 
     const urlRegex = /^https:\/\/.*\..+$/;
 
     if (!website || !urlRegex.test(website)) {
-      return bot.sendMessage(chatId, "Please provide a valid URL.");
+      return bot.sendMessage(
+        chatId,
+        "Please provide a valid URL.\n\nExample: `/short https://example.com`",
+        { parse_mode: "Markdown" }
+      );
     }
 
     try {
@@ -27,7 +31,8 @@ module.exports = (bot) => {
         const creationDate = existingUrl.createdAt.toLocaleString();
         return bot.sendMessage(
           chatId,
-          `Shortened URL: ${shortUrl}\nCreation Date: ${creationDate}`
+          `*Shortened URL:* ${shortUrl}\n*Created On:* ${creationDate}`,
+          { parse_mode: "Markdown" }
         );
       }
 
@@ -39,8 +44,11 @@ module.exports = (bot) => {
       await newUrl.save();
 
       const shortUrl = `https://mo.ct.ws/${id}`;
-      bot.sendMessage(chatId, `Shortened URL: ${shortUrl}`);
+      bot.sendMessage(chatId, `*Shortened URL:* ${shortUrl}`, {
+        parse_mode: "Markdown",
+      });
     } catch (error) {
+      console.error("URL Shortening Error:", error);
       bot.sendMessage(chatId, `Error: ${error.message}`);
     }
   });
